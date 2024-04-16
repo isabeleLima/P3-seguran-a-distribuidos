@@ -6,14 +6,17 @@ import Services.CarService;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 public class GatewayImpl extends UnicastRemoteObject implements Gateway{
     private AuthService authService;
-
     private CarService carService1;
     private CarService carService2;
+    Long timeout = 0L;
+    int errorCounter = 0;
+    Long tempoRestante = 0L;
 
     public GatewayImpl(AuthService auth, CarService carService1,CarService carService2) throws RemoteException {
         super();
@@ -24,7 +27,26 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
 
     @Override
     public String authenticate(String username, String password) throws RemoteException {
-        return authService.authenticate(username, password);
+        Date data = new Date();
+        if (data.getTime() > timeout && errorCounter >= 8) {
+            errorCounter = 0;
+        }
+
+        if (errorCounter >= 8) {
+            Date now = new Date();
+            Long tempoRestante = timeout - now.getTime();
+            return "Muitas tentativas de login. Aguarde " + tempoRestante/1000 + " segundos.";
+        }
+
+        if(authService.authenticate(username, password).equals("Cliente não encontrado")){
+            errorCounter++;
+            if (errorCounter == 8) {
+                timeout = data.getTime() + 30000;
+            }
+            return authService.authenticate(username, password);
+        }else{
+            return authService.authenticate(username, password);
+        }
     }
 
     @Override

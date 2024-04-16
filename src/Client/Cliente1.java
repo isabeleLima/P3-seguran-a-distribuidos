@@ -6,14 +6,17 @@ import Gateway.Gateway;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 public class Cliente1 {
+
     public static void main(String[] args) {
         try {
             Gateway gateway = (Gateway) Naming.lookup("//localhost/Gateway");
             Scanner entry = new Scanner (System.in);
+            Date data = new Date();
 
             System.out.println("BEM VINDO AO SISTEMA CLIENTE 1");
 
