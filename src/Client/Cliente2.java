@@ -1,9 +1,11 @@
 package Client;
 
 import Entity.Car;
+import Entity.Header;
 import Gateway.Gateway;
 
 import java.rmi.Naming;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,8 +14,9 @@ public class Cliente2 {
         try {
             Gateway gateway = (Gateway) Naming.lookup("//localhost/Gateway");
             Scanner entry = new Scanner (System.in);
+            Date data = new Date();
 
-            System.out.println("BEM VINDO AO SISTEMA CLIENTE 2");
+            System.out.println("BEM VINDO AO SISTEMA CLIENTE 1");
 
             while(true){
                 System.out.println("DIGITE SEU USUARIO");
@@ -22,7 +25,9 @@ public class Cliente2 {
                 System.out.println("DIGITE SUA SENHA");
                 String senha = entry.nextLine();
 
-                if(gateway.authenticate(user,senha).equals("cliente")){
+                String resultLogin = gateway.authenticate(user,senha, new Header("user", "server", "auth"));
+
+                if(resultLogin.equals("cliente")){
                     while(true) {
                         System.out.println("DIGITE OQ DESEJA FAZER");
                         System.out.println("1-VER CARROS DISPONIVEIS");
@@ -35,7 +40,7 @@ public class Cliente2 {
 
                         switch (option) {
                             case "1": {
-                                List<String> carsList = gateway.listCars();
+                                List<String> carsList = gateway.listCars(new Header("client", "server", "listCars"));
                                 System.out.println("Listando carros disponiveis");
                                 for (String carInfo : carsList) {
                                     System.out.println(carInfo);
@@ -46,13 +51,13 @@ public class Cliente2 {
                                 System.out.println("Digite o renavam");
                                 String renavam = entry.nextLine();
 
-                                System.out.println(gateway.findCarByRenavan(renavam));
+                                System.out.println(gateway.findCarByRenavan(renavam, new Header("client", "server", "findCarByRenavam")));
                                 break;
                             }
                             case "3": {
                                 System.out.println("Digite o renavam ");
                                 String renavam = entry.nextLine();
-                                System.out.println(gateway.buyCar(renavam));
+                                System.out.println(gateway.buyCar(renavam, new Header("client", "server", "buyCar")));
                                 break;
                             }
                             default:
@@ -62,7 +67,7 @@ public class Cliente2 {
                             break;
                         }
                     }
-                }else if(gateway.authenticate(user,senha).equals("funcionario")){
+                }else if(resultLogin.equals("funcionario")){
                     while(true) {
                         System.out.println("DIGITE OQ DESEJA FAZER");
                         System.out.println("1-VER CARROS DISPONIVEIS");
@@ -77,7 +82,7 @@ public class Cliente2 {
 
                         switch (option) {
                             case "1": {
-                                List<String> carsList = gateway.listCars();
+                                List<String> carsList = gateway.listCars(new Header("funcionario", "server", "listCars"));
                                 System.out.println("Listando carros disponiveis");
                                 for (String carInfo : carsList) {
                                     System.out.println(carInfo);
@@ -103,7 +108,7 @@ public class Cliente2 {
                                 System.out.println("Digite o preco");
                                 double preco = entry.nextDouble();
                                 Car newCar = new Car(renavam, modelo, categoria, Integer.parseInt(ano), Integer.parseInt(qtd), preco);
-                                boolean carAdded = gateway.addCar(newCar);
+                                boolean carAdded = gateway.addCar(newCar, new Header("funcionario", "server", "addCar"));
                                 if (carAdded) {
                                     System.out.println("Carro adicionado com sucesso");
                                 } else {
@@ -115,19 +120,19 @@ public class Cliente2 {
                                 System.out.println("Digite o renavam");
                                 String renavam = entry.nextLine();
 
-                                System.out.println(gateway.removeCar(renavam));
+                                System.out.println(gateway.removeCar(renavam, new Header("funcionario", "server", "removeCar")));
                                 break;
                             }
                             case "4": {
                                 System.out.println("Digite o renavam");
                                 String renavam = entry.nextLine();
 
-                                System.out.println(gateway.findCarByRenavan(renavam));
+                                System.out.println(gateway.findCarByRenavan(renavam, new Header("funcionario", "server", "findCarByRenavan")));
                                 break;
                             }
                             case "5": {
                                 System.out.println("numero de carros disponiveis no total: ");
-                                System.out.println(gateway.getNumberOfCars());
+                                System.out.println(gateway.getNumberOfCars(new Header("funcionario", "server", "getNumberOfCars")));
                                 break;
                             }
                             default:
@@ -138,7 +143,7 @@ public class Cliente2 {
                         }
                     }
                 }else{
-                    System.out.println(gateway.authenticate(user,senha));
+                    System.out.println(resultLogin);
                 }
 
 
@@ -148,5 +153,4 @@ public class Cliente2 {
             e.printStackTrace();
         }
     }
-
 }

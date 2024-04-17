@@ -1,6 +1,8 @@
 package Gateway;
 
 import Entity.Car;
+import Entity.Header;
+import Firewall.Firewall;
 import Services.AuthService;
 import Services.CarService;
 
@@ -14,19 +16,25 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
     private AuthService authService;
     private CarService carService1;
     private CarService carService2;
+    private Firewall firewall;
     Long timeout = 0L;
     int errorCounter = 0;
     Long tempoRestante = 0L;
 
-    public GatewayImpl(AuthService auth, CarService carService1,CarService carService2) throws RemoteException {
+    public GatewayImpl(AuthService auth, CarService carService1,CarService carService2, Firewall firewall) throws RemoteException {
         super();
         this.authService = auth;
         this.carService1 = carService1;
         this.carService2 = carService2;
+        this.firewall = firewall;
     }
 
     @Override
-    public String authenticate(String username, String password) throws RemoteException {
+    public String authenticate(String username, String password, Header header) throws RemoteException {
+        if (!firewall.isPermited(header)){
+            return "AÇÃO BLOQUEADA POR FIREWALL!";
+        }
+
         Date data = new Date();
         if (data.getTime() > timeout && errorCounter >= 8) {
             errorCounter = 0;
@@ -50,43 +58,66 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
     }
 
     @Override
-    public String getCarInfo(String renavan) throws RemoteException, InterruptedException {
+    public String getCarInfo(String renavan, Header header) throws RemoteException, InterruptedException {
+        if (!firewall.isPermited(header)){
+            return "AÇÃO BLOQUEADA POR FIREWALL!";
+        }
+
        CarService carService = returnService();
        return carService.getCarInfo(renavan);
     }
 
     @Override
-    public boolean addCar(Car car) throws RemoteException, InterruptedException {
+    public boolean addCar(Car car, Header header) throws Exception {
+        if (!firewall.isPermited(header)){
+            throw new Exception("AÇÃO BLOQUEADA POR FIREWALL");
+        }
+
         CarService carService = returnService();
         return carService.addCar(car);
     }
 
     @Override
-    public List<String> listCars() throws RemoteException, InterruptedException {
+    public List<String> listCars(Header header) throws Exception {
+        if (!firewall.isPermited(header)){
+            throw new Exception("AÇÃO BLOQUEADA POR FIREWALL");
+        }
         CarService carService = returnService();
         return carService.listCars();
     }
 
     @Override
-    public String removeCar(String renavan) throws RemoteException, InterruptedException {
+    public String removeCar(String renavan, Header header) throws Exception {
+        if (!firewall.isPermited(header)){
+            throw new Exception("AÇÃO BLOQUEADA POR FIREWALL");
+        }
         CarService carService = returnService();
         return carService.removeCar(renavan);
     }
 
     @Override
-    public String findCarByRenavan(String renavan) throws RemoteException, InterruptedException {
+    public String findCarByRenavan(String renavan, Header header) throws Exception {
+        if (!firewall.isPermited(header)){
+            throw new Exception("AÇÃO BLOQUEADA POR FIREWALL");
+        }
         CarService carService = returnService();
         return carService.findCarByRenavan(renavan);
     }
 
     @Override
-    public int getNumberOfCars() throws RemoteException, InterruptedException {
+    public int getNumberOfCars(Header header) throws Exception {
+        if (!firewall.isPermited(header)){
+            throw new Exception("AÇÃO BLOQUEADA POR FIREWALL");
+        }
         CarService carService = returnService();
         return carService.getNumberOfCars();
     }
 
     @Override
-    public String buyCar(String renavan) throws RemoteException, InterruptedException {
+    public String buyCar(String renavan, Header header) throws Exception {
+        if (!firewall.isPermited(header)){
+            throw new Exception("AÇÃO BLOQUEADA POR FIREWALL");
+        }
         CarService carService = returnService();
        return carService.buyCar(renavan);
     }

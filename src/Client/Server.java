@@ -1,4 +1,6 @@
 package Client;
+import Firewall.Firewall;
+import Firewall.FirewallImpl;
 import Gateway.GatewayImpl;
 import Services.AuthService;
 import Services.AuthServiceImpl;
@@ -30,7 +32,10 @@ public class Server {
             LocateRegistry.createRegistry(1099);
             Naming.rebind("AuthenticationServer", authenticationServer);
 
-
+            // Criando e vinculando o servidor de autenticação
+            Firewall firewallServer = new FirewallImpl();
+            LocateRegistry.createRegistry(1120);
+            Naming.rebind("FirewallServer", firewallServer);
 
 
             boolean serviceReady = false;
@@ -54,7 +59,7 @@ public class Server {
                     CarService carService2 = (CarService) Naming.lookup("//localhost:1095/CarService2");
 
                     // Criando e vinculando o gateway adicionando o auth e o service do car
-                    Gateway gateway = new GatewayImpl(authenticationServer, carService1, carService2);
+                    Gateway gateway = new GatewayImpl(authenticationServer, carService1, carService2, firewallServer);
 
                     Naming.rebind("Gateway", gateway);
                     serviceReady = true; // Se o serviço for encontrado, saia do loop
