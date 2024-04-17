@@ -15,7 +15,7 @@ public class Cliente1 {
 
     public static void main(String[] args) {
         try {
-            Gateway gateway = (Gateway) Naming.lookup("//localhost/Gateway");
+            Gateway gateway = (Gateway) Naming.lookup("//localhost:1092/gateway");
             Scanner entry = new Scanner (System.in);
             Date data = new Date();
 
@@ -43,7 +43,7 @@ public class Cliente1 {
 
                         switch (option) {
                             case "1": {
-                                List<String> carsList = gateway.listCars(new Header("user", "server", "listCars"));
+                                List<String> carsList = gateway.listCars(new Header("client", "server", "listCars"));
                                 System.out.println("Listando carros disponiveis");
                                 for (String carInfo : carsList) {
                                     System.out.println(carInfo);
@@ -72,7 +72,7 @@ public class Cliente1 {
                             default:
                                 break;
                         }
-                        if(option.equals("3")){
+                        if(option.equals("4")){
                             break;
                         }
                     }
@@ -84,7 +84,7 @@ public class Cliente1 {
                         System.out.println("3-EXCLUIR UM CARRO");
                         System.out.println("4-PESQUISAR UM CARRO");
                         System.out.println("5-EXIBIR QUANTIDADE DE CARROS");
-                        System.out.println("7-SAIR");
+                        System.out.println("6-SAIR");
 
 
                         String option = entry.nextLine();
@@ -147,7 +147,7 @@ public class Cliente1 {
                             default:
                                 break;
                         }
-                        if(option.equals("3")){
+                        if(option.equals("6")){
                             break;
                         }
                     }

@@ -21,18 +21,15 @@ import Services.CarService;
 public class Server {
     public static void main(String[] args) {
         try {
-            // Obtendo o endereço IP do servidor
             String ipAddress = InetAddress.getLocalHost().getHostAddress();
-            // Obtendo a data e hora atuais
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentTime = dateFormat.format(new Date());
 
-            // Criando e vinculando o servidor de autenticação
+
             AuthService authenticationServer = new AuthServiceImpl();
             LocateRegistry.createRegistry(1099);
             Naming.rebind("AuthenticationServer", authenticationServer);
 
-            // Criando e vinculando o servidor de autenticação
             Firewall firewallServer = new FirewallImpl();
             LocateRegistry.createRegistry(1120);
             Naming.rebind("FirewallServer", firewallServer);
@@ -61,7 +58,9 @@ public class Server {
                     // Criando e vinculando o gateway adicionando o auth e o service do car
                     Gateway gateway = new GatewayImpl(authenticationServer, carService1, carService2, firewallServer);
 
-                    Naming.rebind("Gateway", gateway);
+                    LocateRegistry.createRegistry(1092);
+
+                    Naming.rebind("//localhost:1092/gateway", gateway);
                     serviceReady = true; // Se o serviço for encontrado, saia do loop
                 } catch (NotBoundException e) {
                     System.out.println("Aguardando o registro do serviço CarService...");

@@ -64,7 +64,10 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
         }
 
        CarService carService = returnService();
-       return carService.getCarInfo(renavan);
+        if(carService !=null){
+            return carService.getCarInfo(renavan);
+        }
+       return "Servidores ocupados tente novamente mais tarde";
     }
 
     @Override
@@ -74,7 +77,11 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
         }
 
         CarService carService = returnService();
-        return carService.addCar(car);
+
+        if(carService !=null){
+            return carService.addCar(car);
+        }
+        return false;
     }
 
     @Override
@@ -123,17 +130,19 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
     }
 
     public CarService returnService() throws RemoteException {
-        if(!carService1.isOcupado()){
-            carService1.setOcupado(true);
-            return carService1;
+        if(carService1 !=null){
+            if(!carService1.isOcupado()){
+                carService1.setOcupado(true);
+                return carService1;
+            }
+
+            if(carService2 !=null){
+                if(carService1.isOcupado() && !carService2.isOcupado()){
+                    carService2.setOcupado(true);
+                    return carService2;
+                }
+            }
         }
-
-
-        if(carService1.isOcupado() && !carService2.isOcupado()){
-            carService2.setOcupado(true);
-            return carService2;
-        }
-
         return null;
     }
 }

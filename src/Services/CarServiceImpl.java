@@ -23,34 +23,45 @@ public class CarServiceImpl extends UnicastRemoteObject implements CarService{
 
     @Override
     public String getCarInfo(String renavan) throws RemoteException, InterruptedException {
+        this.sincServe.AddToQueue(this);
+
         this.carList = getSincronized(this.sincServe);
         for (Car car : carList) {
             if (car.getRenavan().equals(renavan)) {
+                this.sincServe.removeFromQueue();
+                setOcupado(false);
                 return car.toString();
             }
         }
+        this.sincServe.removeFromQueue();
         setOcupado(false);
         return "Carro não encontrado";
     }
 
     @Override
     public boolean addCar(Car car) throws RemoteException, InterruptedException {
+        this.sincServe.AddToQueue(this);
+
         this.carList = getSincronized(this.sincServe);
+
+        carList.add(car);
+        setSrinconized(sincServe);
+        this.sincServe.removeFromQueue();
         setOcupado(false);
-        return carList.add(car);
+        return true;
     }
 
     @Override
     public List<String> listCars() throws RemoteException, InterruptedException {
         this.sincServe.AddToQueue(this);
-
-
         this.carList = getSincronized(this.sincServe);
+
         List<String> carInfoList = new ArrayList<>();
         for (Car car : carList) {
             carInfoList.add(car.toString());
         }
 
+        setSrinconized(sincServe);
         this.sincServe.removeFromQueue();
         setOcupado(false);
         return carInfoList;

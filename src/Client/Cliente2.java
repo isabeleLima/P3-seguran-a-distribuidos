@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class Cliente2 {
     public static void main(String[] args) {
         try {
-            Gateway gateway = (Gateway) Naming.lookup("//localhost/Gateway");
+            Gateway gateway = (Gateway) Naming.lookup("//localhost:1092/gateway");
             Scanner entry = new Scanner (System.in);
             Date data = new Date();
 
@@ -63,7 +63,7 @@ public class Cliente2 {
                             default:
                                 break;
                         }
-                        if(option.equals("3")){
+                        if(option.equals("4")){
                             break;
                         }
                     }
@@ -75,7 +75,7 @@ public class Cliente2 {
                         System.out.println("3-EXCLUIR UM CARRO");
                         System.out.println("4-PESQUISAR UM CARRO");
                         System.out.println("5-EXIBIR QUANTIDADE DE CARROS");
-                        System.out.println("7-SAIR");
+                        System.out.println("6-SAIR");
 
 
                         String option = entry.nextLine();
@@ -138,7 +138,7 @@ public class Cliente2 {
                             default:
                                 break;
                         }
-                        if(option.equals("3")){
+                        if(option.equals("6")){
                             break;
                         }
                     }
